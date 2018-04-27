@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>bx-slider를 이용한 롤링팝업</title>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="jquery.bxslider.min.js"></script>
+<link href="jquery.bxslider.css" rel="stylesheet" />
+<style>
+    #mask {  
+      position:absolute;  
+      z-index:-55000;  
+      background-color:#000;  
+      display:none;  
+      left:0;
+      top:0;
+    }
+    .window{
+      display: none;
+      position:absolute;  
+      left:100px;
+      top:100px;
+      z-index:-10000;
+    }
+/* 배너사이즈와 위치 */
+#s_banner_wrap {width:300px; height:400px; position: relative; text-align:center; z-index: 1;}
+.banner_01 {width:300px; height:400px; background:#093; z-index:1; text-align:center;}
+.banner_02 {width:300px; height:400px; background:#F00; z-index:1; text-align:center;}
+
+/* 사용자 페이징 - 위치와 모양을 자유롭게 변형 */
+#bx-pager1 {position: absolute; bottom:10px; z-index: 1;}
+#bx-pager1 a{float:left; margin:0 5px;display: block; width:20px; height:20px; font-size:12px; line-height:18px; text-align:center; background:#999; color:#333; z-index: 1;}
+#bx-pager1 a:hover, .bx-pager1 a:active{ background: #000; color: #CCC; z-index: 1;}
+#bx-diva{ width: 300px; margin: 0;top: 5px; right: 5px; z-index: 200; height: 40px;   position: absolute;
+}
+#bx-closebutton {margin: 0; height: 32px;background: url(images/close.png) no-repeat;background-size: 32px; background-position: right top;}
+/* 사용자 페이징 - 엑티브상태에 대한 속성값 지정 */
+#bx-pager1 a.active{ background: #000; color: #CCC; z-index: 1;}
+#bx-textbox {width: 300px; margin: 0; bottom: 0px; top: 350px; right: 0px; z-index: 200; height: 32px;    position: absolute;}
+#bx-textbox h3{font-family:"돋움", dotum, "굴림", gulim, arial, helvetica, sans-serif; font-size:1em; color:#ffffff; text-align: right; position: relative; vertical-align:text-top; margin-top: 0px;}
+#bx-textbox #imgs{background: url(images/checkbox_empty.png) no-repeat; background-size: 28px; background-position:relative; text-align: bottom; height: 28px;}
+#bx-textbox img{max-width: 32px; }
+</style>    
+<script>
+ function wrapWindowByMask(){
+        //화면의 높이와 너비를 구한다.
+        var maskHeight = $(document).height();  
+        var maskWidth = $(window).width();  
+
+        //마스크의 높이와 너비를 화면 것으로 만들어 전체 화면을 채운다.
+        $('#mask').css({'width':maskWidth,'height':maskHeight});  
+
+        //애니메이션 효과 - 일단 1초동안 까맣게 됐다가 80% 불투명도로 간다.
+       // $('#mask').fadeIn(1000);      
+        $('#mask').fadeTo("slow",0.75);    
+
+        //윈도우 같은 거 띄운다.
+        $('.window').show();
+    }
+
+$(document).ready(function(){
+	var slider = $('.bxslider').bxSlider({
+			auto: true, mode:'fade',
+		});
+		// 클릭시 멈춤 현상 해결 //
+		$(document).on('click','.bx-next, .bx-prev',function() {
+		slider.stopAuto();
+		slider.startAuto();
+		});
+		$(document).on('mouseover','.bx-pager, #bx-pager1',function() {
+		slider.stopAuto();
+		slider.startAuto();
+		});
+
+		wrapWindowByMask();
+
+    //오늘은 그만보기 버튼을 눌렀을 때
+    $('#selectBtn').on({'click': function(){ 
+        var img = $('#selectBtn').attr('src');
+        if (img == './images/checkbox_select.png' )
+        {
+          $('#selectBtn').attr('src','./images/checkbox_empty.png');
+        } 
+        else
+        {
+          $('#selectBtn').attr('src','./images/checkbox_select.png');
+        }
+      }
+    });    
+
+    //닫기버튼을 눌렀을떄
+      //오늘은 그만보기 버튼을 눌렀을 때
+    $('#bx-closebutton').on({'click': function(){ 
+         $('#mask').hide();
+         $('#s_banner_wrap').hide();  
+      }
+    });    
+
+});
+</script>
+</head>
+<body>
+<div id="mask">
+</div>
+<div id="s_banner_wrap">
+	<div id=bx-diva><ul id="bx-closebutton"  href="#" class="close"></ul></div>
+	<ul class="bxslider" height="400px" width="300px">
+      <li class="banner_01"></li>
+      <li class="banner_02"></li>
+    </ul>
+  <div id="bx-textbox"><h3>오늘은그만보기<img src="./images/checkbox_empty.png" text-align="right" width="32px" height="32px" id="selectBtn"></h3></div>
+</div>
+</body>
+</html>
